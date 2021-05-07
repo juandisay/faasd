@@ -169,7 +169,7 @@ You may find alternative package names for CentOS and other Linux distributions.
 #### Install Go 1.13 (x86_64)
 
 ```bash
-curl -sSLf https://dl.google.com/go/go1.13.6.linux-amd64.tar.gz > /tmp/go.tgz
+curl -SLf https://golang.org/dl/go1.16.linux-amd64.tar.gz > /tmp/go.tgz
 sudo rm -rf /usr/local/go/
 sudo mkdir -p /usr/local/go/
 sudo tar -xvf /tmp/go.tgz -C /usr/local/go/ --strip-components=1
@@ -190,7 +190,7 @@ echo "export PATH=\$PATH:/usr/local/go/bin/" | tee -a $HOME/.bash_profile
 #### Or on Raspberry Pi (armhf)
 
 ```bash
-curl -SLsf https://dl.google.com/go/go1.13.6.linux-armv6l.tar.gz > go.tgz
+curl -SLsf https://golang.org/dl/go1.16.linux-armv6l.tar.gz > go.tgz
 sudo rm -rf /usr/local/go/
 sudo mkdir -p /usr/local/go/
 sudo tar -xvf go.tgz -C /usr/local/go/ --strip-components=1
@@ -233,7 +233,7 @@ export SUFFIX="-armhf"
 export SUFFIX="-arm64"
 
 # Then download
-curl -fSLs "https://github.com/openfaas/faasd/releases/download/0.10.2/faasd$SUFFIX" \
+curl -fSLs "https://github.com/openfaas/faasd/releases/download/0.11.0/faasd$SUFFIX" \
     -o "/tmp/faasd" \
     && chmod +x "/tmp/faasd" 
 sudo mv /tmp/faasd /usr/local/bin/

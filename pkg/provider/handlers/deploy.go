@@ -29,8 +29,8 @@ import (
 
 const annotationLabelPrefix = "com.openfaas.annotations."
 
+// MakeDeployHandler returns a handler to deploy a function
 func MakeDeployHandler(client *containerd.Client, cni gocni.CNI, secretMountPath string, alwaysPull bool) func(w http.ResponseWriter, r *http.Request) {
-
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		if r.Body == nil {
@@ -147,6 +147,7 @@ func deploy(ctx context.Context, req types.FunctionDeployment, client *container
 		containerd.WithSnapshotter(snapshotter),
 		containerd.WithNewSnapshot(name+"-snapshot", image),
 		containerd.WithNewSpec(oci.WithImageConfig(image),
+			oci.WithHostname(name),
 			oci.WithCapabilities([]string{"CAP_NET_RAW"}),
 			oci.WithMounts(mounts),
 			oci.WithEnv(envs),
@@ -199,17 +200,18 @@ func createTask(ctx context.Context, client *containerd.Client, container contai
 	log.Printf("Container ID: %s\tTask ID %s:\tTask PID: %d\t\n", name, task.ID(), task.Pid())
 
 	labels := map[string]string{}
-	network, err := cninetwork.CreateCNINetwork(ctx, cni, task, labels)
+	_, err := cninetwork.CreateCNINetwork(ctx, cni, task, labels)
 
 	if err != nil {
 		return err
 	}
 
-	ip, err := cninetwork.GetIPAddress(network, task)
+	ip, err := cninetwork.GetIPAddress(name, task.Pid())
 	if err != nil {
 		return err
 	}
-	log.Printf("%s has IP: %s.\n", name, ip.String())
+
+	log.Printf("%s has IP: %s.\n", name, ip)
 
 	_, waitErr := task.Wait(ctx)
 	if waitErr != nil {
